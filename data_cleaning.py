@@ -91,14 +91,12 @@ def preprocess_text(text):
     return ' '.join(tokens)
 
 def clean_data(df):
-    print(df.shape)
     df = df[['id', 'site', 'job_url', 'title', 'company', 'location', 'date_posted', 'description', 'date_fetched']]
     df = df.dropna(subset=['description', 'title', 'company'])
     df['title_lower'] = df['title'].str.lower()
     df['company_lower'] = df['company'].str.lower()
     df = df.drop_duplicates(subset=['title_lower', 'company_lower'], keep='first', ignore_index=True)
     df = df.drop(columns=['title_lower', 'company_lower'])
-    print(df.shape)
     df = df[~df['title'].str.contains('Senior', case=False)]
     df = df[~df['title'].str.contains('Manager', case=False)]
     df = df[~df['title'].str.contains('Director', case=False)]
@@ -110,18 +108,13 @@ def clean_data(df):
     df = df[~df['title'].str.contains('Professor', case=False)]
     df = df[~df['title'].str.contains('Sr.', case=False)]
     df = df[~df['title'].str.contains('President', case=False)]
-    print("After dropping bad titles \n")
-    print(df.shape)
     df = df.drop_duplicates(subset=['title', 'company', 'date_posted'])
-    print(df.shape)
     df['location'] = df['location'].fillna('Remote, US')
     df['location'] = df['location'].str.replace('US', 'Remote, US')
     df['location'] = df['location'].str.replace('United States', 'Remote, US')
     df['location_split'] = df['location'].str.split(',').apply(lambda x: len(x) if x else 0)
 
     df = df[df['location_split'] > 1]
-    print('after splitting location: \n')
-    print(df.shape)
     df['city'] = df['location'].str.split(',').apply(lambda x: x[0].strip())
     df['state'] = df['location'].str.split(',').apply(lambda x: x[1].strip())
     df.drop(columns=['location', 'location_split'], inplace=True)
@@ -129,15 +122,7 @@ def clean_data(df):
     df.loc[(df['state'] == 'US') & (df['city'] == 'Remote'), 'city'] = 'Remote'
     df.loc[(df['state'] == 'US') & (df['city'] == 'Remote'), 'state'] = 'Remote'
 
-    print('after processing location: \n')
-    print(df.shape)
-
-    print('after processing location: \n')
-    print(df.shape)
-
     df['cleaned_desc'] = df['description'].apply(extract_info)
-    print('after processing bullet points: \n')
-    print(df.shape)
     df['cleaned_desc_2_len'] = df['cleaned_desc'].apply(lambda x: len(x.split()))
     df = df[df['cleaned_desc_2_len'] > 20]
     df['description_clean'] = df['cleaned_desc'].apply(preprocess_text)
