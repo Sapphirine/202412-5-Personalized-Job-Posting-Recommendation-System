@@ -3,11 +3,11 @@ import pandas as pd
 from datetime import date
 from jobspy import scrape_jobs
 
-def update_job_data(job_titles = ["software engineer", "data scientist", "data analyst"], 
+def update_job_data(job_titles = ["software engineer", "data scientist", "data analyst", "sales", "human resources"], 
                     location = "United States",
-                    hours_old = 240, 
-                    results_per_query = 50, 
-                    total_results_wanted = 1000, output_file="job_data.csv"):
+                    hours_old = 720, 
+                    results_per_query = 40, 
+                    total_results_wanted = 3000, output_file="job_data.csv"):
 
     all_jobs = []
     max_queries = total_results_wanted // results_per_query  # Number of pages to fetch
