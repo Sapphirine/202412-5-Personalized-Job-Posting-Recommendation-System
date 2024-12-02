@@ -1,6 +1,10 @@
 from pypdf import PdfReader
 import json
 from openai import OpenAI
+import logging
+
+# Set the logging level for 'pypdf' to ERROR or higher
+logging.getLogger('pypdf').setLevel(logging.ERROR)
 
 
     # ATS extractor function (unchanged)

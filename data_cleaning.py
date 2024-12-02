@@ -1,29 +1,9 @@
 import pandas as pd
 import numpy as np
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
 import re 
-
-
-# def extract_filtered_bullet_texts(job_description):
-
-#     # Define keywords to filter out
-#     excluded_keywords = ['equal', 'disability', 'veteran', 'criminal', 'e\-verify', '401(k)', 'insurance', '----']
-
-#     # Regex to match bullet points and the text following them
-#     bullet_texts = re.findall(r'^\s*[\*\-\•\d+\.]\s*(.+)', job_description, re.MULTILINE)
-
-#     # Filter out bullet points containing excluded keywords (case-insensitive)
-#     filtered_bullets = [
-#         text.strip() for text in bullet_texts
-#         if not any(keyword in text.lower() for keyword in excluded_keywords)
-#     ]
-#     # if a sentence starts with or end with *, delete the sentence        
-#     filtered_bullets = [x for x in filtered_bullets if not x.startswith('*') and not x.endswith('*')]
-#     # if a sentence only contains numbers, delete the sentence
-#     filtered_bullets = [x for x in filtered_bullets if not x.isdigit()]
-#     # if a sentence only contains 2 or fewer words, delete the sentence
-#     filtered_bullets = [x for x in filtered_bullets if len(x.split()) > 2]
-
-#     return filtered_bullets
 
 def extract_info(text):
     """
@@ -42,7 +22,8 @@ def extract_info(text):
                          'holiday', 'coverage', 'community service', 'paid parental leave', 'discount', 'family', 'employee']
     title_excluded_keywords = ['company', 'benefits', 'benefit', 'who we are', 
                                'diversity', 'belonging', 'compensation', 'diversity', 
-                               'equal', 'do', 'office', 'offices', 'why', 'interview', 'opportunity', 'about', 'perks', 'fits and pe']
+                               'equal', 'do', 'office', 'offices', 'why', 'interview', 'opportunity', 'about', 'perks', 'fits and pe', 
+                               'under', 'designation', 'hybrid', 'remote', 'salary', 'date', 'who', 'visa', 'commitment', 'electrical', 'id', 'travel']
 
     # Find all titles with their positions
     titles = [(m.group(1).strip(), m.start(), m.end()) for m in re.finditer(pattern_title, text)]
@@ -89,12 +70,35 @@ def extract_info(text):
     extracted_data = extracted_data.replace('*', ' ')
     extracted_data = extracted_data.replace('-', ' ')
     
+    # limit the length of the extracted data to 2500 words 
+    extracted_data = extracted_data[:2500]
+    # find the last sentence in the extracted data
+    last_sentence = extracted_data.rfind('.')
+    extracted_data = extracted_data[:last_sentence+1]
+    
 
     return extracted_data
 
+def preprocess_text(text):
+    lemmatizer = WordNetLemmatizer()
+    stop_words = set(stopwords.words('english'))
+    
+    text = text.lower()
+    text = re.sub(r'[^a-zA-Z\s]', '', text)
+    tokens = word_tokenize(text)
+    tokens = [word for word in tokens if word not in stop_words]
+    tokens = [lemmatizer.lemmatize(word) for word in tokens]
+    return ' '.join(tokens)
+
 def clean_data(df):
+    print(df.shape)
     df = df[['id', 'site', 'job_url', 'title', 'company', 'location', 'date_posted', 'description', 'date_fetched']]
     df = df.dropna(subset=['description', 'title', 'company'])
+    df['title_lower'] = df['title'].str.lower()
+    df['company_lower'] = df['company'].str.lower()
+    df = df.drop_duplicates(subset=['title_lower', 'company_lower'], keep='first', ignore_index=True)
+    df = df.drop(columns=['title_lower', 'company_lower'])
+    print(df.shape)
     df = df[~df['title'].str.contains('Senior', case=False)]
     df = df[~df['title'].str.contains('Manager', case=False)]
     df = df[~df['title'].str.contains('Director', case=False)]
@@ -103,27 +107,40 @@ def clean_data(df):
     df = df[~df['title'].str.contains('Lead', case=False)]
     df = df[~df['title'].str.contains('Intern', case=False)]
     df = df[~df['title'].str.contains('Co-Op', case=False)]
+    df = df[~df['title'].str.contains('Professor', case=False)]
+    df = df[~df['title'].str.contains('Sr.', case=False)]
+    df = df[~df['title'].str.contains('President', case=False)]
+    print("After dropping bad titles \n")
+    print(df.shape)
     df = df.drop_duplicates(subset=['title', 'company', 'date_posted'])
-    df['location'] = df['location'].fillna('')  # Fill NaN values with empty string
+    print(df.shape)
+    df['location'] = df['location'].fillna('Remote, US')
+    df['location'] = df['location'].str.replace('US', 'Remote, US')
+    df['location'] = df['location'].str.replace('United States', 'Remote, US')
     df['location_split'] = df['location'].str.split(',').apply(lambda x: len(x) if x else 0)
 
     df = df[df['location_split'] > 1]
+    print('after splitting location: \n')
+    print(df.shape)
     df['city'] = df['location'].str.split(',').apply(lambda x: x[0].strip())
     df['state'] = df['location'].str.split(',').apply(lambda x: x[1].strip())
     df.drop(columns=['location', 'location_split'], inplace=True)
 
-    df = df[~(df['state'] == 'US') & (df['city'] != 'Remote')]
-    df = df[(df['description'].str.contains('Qualifications', case=False)) 
-        | (df['description'].str.contains('Skills', case=False))
-        | (df['description'].str.contains('Job Functions', case=False))
-        | (df['description'].str.contains('Responsibilities', case=False))
-        | (df['description'].str.contains('Requirements', case=False))]
+    df.loc[(df['state'] == 'US') & (df['city'] == 'Remote'), 'city'] = 'Remote'
+    df.loc[(df['state'] == 'US') & (df['city'] == 'Remote'), 'state'] = 'Remote'
 
+    print('after processing location: \n')
+    print(df.shape)
+
+    print('after processing location: \n')
+    print(df.shape)
 
     df['cleaned_desc'] = df['description'].apply(extract_info)
+    print('after processing bullet points: \n')
+    print(df.shape)
     df['cleaned_desc_2_len'] = df['cleaned_desc'].apply(lambda x: len(x.split()))
-    df = df[df['cleaned_desc_2_len'] > 100]
-    df = df[df['cleaned_desc_2_len'] < 1000]
+    df = df[df['cleaned_desc_2_len'] > 20]
+    df['description_clean'] = df['cleaned_desc'].apply(preprocess_text)
 
     
     return df

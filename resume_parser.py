@@ -1,6 +1,8 @@
 from pypdf import PdfReader
 import json
 from openai import OpenAI
+import logging
+logging.getLogger('pypdf').setLevel(logging.ERROR)
 
 # OpenAI API Key
 api_key = "generate_your_own_api_key"
@@ -106,6 +108,8 @@ def resume_parser(pdf_path, output_file="parsed_resume.json"):
         json.dump(final_data, outfile, indent=4)
 
     print(f"Parsed data saved to {output_file}")
+    
+    return final_data
 
 # Example usage:
 # resume_parser("path_to_resume.pdf")
