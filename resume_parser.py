@@ -5,7 +5,7 @@ import logging
 logging.getLogger('pypdf').setLevel(logging.ERROR)
 
 # OpenAI API Key
-api_key = "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"
+api_key = "generate_your_own_api_key"
 
 def resume_parser(pdf_path, output_file="parsed_resume.json"):
     """
