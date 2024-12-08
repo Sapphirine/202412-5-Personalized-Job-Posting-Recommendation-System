@@ -9,7 +9,7 @@ logging.getLogger('pypdf').setLevel(logging.ERROR)
 
     # ATS extractor function (unchanged)
 def resume_summary(pdf_path):
-    api_key = "use your openai api key here"
+    api_key = "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"
     reader = PdfReader(pdf_path)
     page = reader.pages[0]
     text = page.extract_text()

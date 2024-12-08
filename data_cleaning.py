@@ -126,6 +126,8 @@ def clean_data(df):
     df['cleaned_desc_2_len'] = df['cleaned_desc'].apply(lambda x: len(x.split()))
     df = df[df['cleaned_desc_2_len'] > 20]
     df['description_clean'] = df['cleaned_desc'].apply(preprocess_text)
+    
+    df['days_old'] = (pd.to_datetime('today') - pd.to_datetime(df['date_posted'])).dt.days
 
     
     return df

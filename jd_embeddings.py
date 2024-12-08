@@ -38,6 +38,3 @@ def compute_job_embeddings(df):
         pickle.dump(tfidf_job_descriptions, f)
 
     torch.save(job_embeddings_bert, 'job_embeddings_bert.pt')
-
-
-    return job_embeddings_bert, tfidf_job_descriptions, tfidf_vectorizer
