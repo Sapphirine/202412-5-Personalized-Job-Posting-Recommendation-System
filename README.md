@@ -55,5 +55,6 @@ To run the application:
 
 ## Authors
 
-- **Binrui Yang**  
-
+- **Binrui Yang**
+- **Jiaqi Liu**
+- **Tianyi Chen**
