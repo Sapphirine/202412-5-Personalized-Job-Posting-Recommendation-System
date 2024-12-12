@@ -1,0 +1,11 @@
+pandas
+numpy
+nltk
+jobspy
+sentence-transformers
+transformers
+torch
+scikit-learn
+pypdf
+openai
+streamlit 
