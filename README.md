@@ -48,6 +48,7 @@ final_project_6893/
 
 ## Usage
 
+To run the application: 
 ```streamlit run app/app.py```
 
 
