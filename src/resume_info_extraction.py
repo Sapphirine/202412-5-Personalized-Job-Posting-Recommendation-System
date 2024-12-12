@@ -3,11 +3,8 @@ import json
 from openai import OpenAI
 import logging
 
-# Set the logging level for 'pypdf' to ERROR or higher
 logging.getLogger('pypdf').setLevel(logging.ERROR)
 
-
-    # ATS extractor function (unchanged)
 def resume_summary(pdf_path):
     api_key = "generate_your_own_api_key"
     reader = PdfReader(pdf_path)

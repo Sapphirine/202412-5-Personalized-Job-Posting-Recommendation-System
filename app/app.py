@@ -1,4 +1,3 @@
-# app.py
 from venv import logger
 import streamlit as st
 import pandas as pd
@@ -14,11 +13,16 @@ import re
 import torch
 import nltk
 from nltk.corpus import stopwords
+import os
+import sys
+
+module_path = os.path.abspath(os.path.join('./src'))
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
 from resume_parser import resume_parser
 from resume_info_extraction import resume_summary
 from data_cleaning import clean_data
-
-
 
 # Initialize session state
 if 'recommendations' not in st.session_state:
@@ -26,9 +30,9 @@ if 'recommendations' not in st.session_state:
 
 class JobRecommender:
     def __init__(self):
-        self.job_embedding_bert = torch.load('job_embeddings_bert.pt')
-        self.job_embedding_tfidf = pickle.load(open('tfidf_job_descriptions.pkl', 'rb'))
-        with open('tfidf_model.pkl', 'rb') as f:
+        self.job_embedding_bert = torch.load('./data/job_embeddings_bert.pt')
+        self.job_embedding_tfidf = pickle.load(open('./data/tfidf_job_descriptions.pkl', 'rb'))
+        with open('./data/tfidf_model.pkl', 'rb') as f:
             self.tfidf_vectorizer = pickle.load(f)
         
     def compute_resume_embedding(self, resume_sum, resume_info):
@@ -116,7 +120,7 @@ def main():
             recommender = JobRecommender()
             
             
-            df = pd.read_csv('job_data.csv')  # In real app, this would be your actual job database
+            df = pd.read_csv('./data/job_data.csv')  # In real app, this would be your actual job database
             df = clean_data(df)
             
             resume_embedding_bert, resume_tfidf = recommender.compute_resume_embedding(resume_sum, resume_info)
@@ -129,7 +133,6 @@ def main():
                 num_recommendations
             )
             
-            # Store recommendations in session state
             st.session_state.recommendations = recommendations
                 
     # Display recommendations

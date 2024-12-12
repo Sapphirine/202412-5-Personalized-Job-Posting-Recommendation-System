@@ -7,10 +7,10 @@ def update_job_data(job_titles = ["software engineer", "data scientist", "data a
                     location = "United States",
                     hours_old = 720, 
                     results_per_query = 40, 
-                    total_results_wanted = 3000, output_file="job_data.csv"):
+                    total_results_wanted = 3000, output_file="./data/job_data.csv"):
 
     all_jobs = []
-    max_queries = total_results_wanted // results_per_query  # Number of pages to fetch
+    max_queries = total_results_wanted // results_per_query  
 
     if os.path.exists(output_file):
         existing_data = pd.read_csv(output_file)

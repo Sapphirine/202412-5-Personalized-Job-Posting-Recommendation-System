@@ -31,10 +31,10 @@ def compute_job_embeddings(df):
     tfidf_vectorizer = TfidfVectorizer(stop_words='english', max_features=10000)
     tfidf_job_descriptions = tfidf_vectorizer.fit_transform(df['description_clean'])
 
-    with open('tfidf_model.pkl', 'wb') as f:
+    with open('./data/tfidf_model.pkl', 'wb') as f:
         pickle.dump(tfidf_vectorizer, f)
 
-    with open('tfidf_job_descriptions.pkl', 'wb') as f:
+    with open('./data/tfidf_job_descriptions.pkl', 'wb') as f:
         pickle.dump(tfidf_job_descriptions, f)
 
-    torch.save(job_embeddings_bert, 'job_embeddings_bert.pt')
+    torch.save(job_embeddings_bert, './data/job_embeddings_bert.pt')

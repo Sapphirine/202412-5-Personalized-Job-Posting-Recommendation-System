@@ -10,20 +10,11 @@ api_key = "generate_your_own_api_key"
 def resume_parser(pdf_path, output_file="parsed_resume.json"):
     """
     Parses a resume PDF and extracts structured information, saving the results to a JSON file.
-
-    Args:
-        pdf_path (str): Path to the PDF resume.
-        output_file (str): Output JSON file to save the parsed data.
-        
-    Returns:
-        None
     """
-    # Read PDF and extract text
     reader = PdfReader(pdf_path)
     page = reader.pages[0]
     text = page.extract_text()
 
-    # ATS extractor function (unchanged)
     def ats_extractor(resume_data):
         prompt = '''
         You are an AI bot designed to act as a professional for parsing resumes. You are given a resume, 
@@ -59,7 +50,6 @@ def resume_parser(pdf_path, output_file="parsed_resume.json"):
 
         return data
 
-    # Clean and parse JSON function (unchanged)
     def clean_and_parse_json(text):
         try:
             text = text.strip()
