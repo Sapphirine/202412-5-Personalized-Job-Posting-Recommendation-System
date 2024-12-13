@@ -18,9 +18,8 @@ final_project_6893/
 
 ## Key Features
 
-- **Data Workflow Orchestration**: Uses Apache Airflow to automate and manage data pipelines.
+- **Data Workflow Orchestration**
 - **Recommendation Engine**: Implements a machine learning-based recommendation system.
-- **Visualization and Analysis**: Includes Jupyter Notebook for exploring and analyzing data.
 
 ## Prerequisites
 
