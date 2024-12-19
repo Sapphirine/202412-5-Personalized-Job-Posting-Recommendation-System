@@ -8,14 +8,7 @@ import re
 def extract_info(text):
     """
     Extracts the first paragraph and bullet points following each title in the text.
-
-    Parameters:
-    - text (str): The input text from which to extract information.
-
-    Returns:
-    - List[Dict]: A list of dictionaries containing the title, first paragraph, and bullet points.
     """
-    # Pattern to find titles in the format **title**
     pattern_title = r'\*\*(.*?)\*\*'
 
     excluded_keywords = ['equal', 'disability', 'veteran', 'criminal', 'e\-verify', '401(k)', 'insurance', '----', 'tuition', 'vacation', 
@@ -41,36 +34,27 @@ def extract_info(text):
     # Iterate over each title
     for i in range(len(titles) - 1):
         title_text = titles[i][0]
-        start_content = titles[i][2]  # End position of the current title
-        end_content = titles[i + 1][1]  # Start position of the next title
+        start_content = titles[i][2]  
+        end_content = titles[i + 1][1]  
 
-        # Extract content between the current title and the next title
         content = text[start_content:end_content]
 
-        # Extract the first paragraph after the title
         paragraphs = re.split(r'\n\s*\n', content.strip(), maxsplit=1)
         first_paragraph = paragraphs[0].strip() if paragraphs else ''
-
-        # Extract bullet points that start with '*'
         bullet_points = re.findall(r'^\s*\*\s*(.*)', content, re.MULTILINE)
 
         excluded_keywords = ['equal', 'disability', 'veteran', 'criminal', 'e\-verify', '401(k)', 'insurance', '----', 'tuition', 'vacation', 'holiday', 'coverage', 'community service', 'paid parental leave', 'discount', 'family', 'employee']
-
-        # Filter out sentences that contain excluded keywords
         bullet_points = [point.strip() for point in bullet_points if not any(keyword in point.lower() for keyword in excluded_keywords)]
 
-        # delete the symbol in front of bullet points 
-        # Append the extracted information to the list
+
         extracted_data += f"{first_paragraph}\n"
         extracted_data += f"{''.join(bullet_points)}\n\n"
 
-    # remove any blank spaces 
     extracted_data = ' '.join(extracted_data.split())
     extracted_data = extracted_data.replace('  ', ' ')
     extracted_data = extracted_data.replace('*', ' ')
     extracted_data = extracted_data.replace('-', ' ')
     
-    # limit the length of the extracted data to 2500 words 
     extracted_data = extracted_data[:2500]
     # find the last sentence in the extracted data
     last_sentence = extracted_data.rfind('.')
