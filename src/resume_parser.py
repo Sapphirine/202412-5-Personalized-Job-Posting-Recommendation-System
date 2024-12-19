@@ -68,7 +68,6 @@ def resume_parser(pdf_path, output_file="parsed_resume.json"):
         print("Failed to parse data. Exiting.")
         return
 
-    # Construct employment experiences and technical skills
     employment_experiences = ""
     employment_experiences += "Year of experience: "
     employment_experiences += parsed_data['years of experience'] + ". "
@@ -87,7 +86,6 @@ def resume_parser(pdf_path, output_file="parsed_resume.json"):
     technical_skills = technical_skills.split(',')
     technical_skills = [skill.strip() for skill in technical_skills]
 
-    # Save parsed data to JSON file
     final_data = {
         "parsed_data": parsed_data,
         "employment_experiences": employment_experiences,
