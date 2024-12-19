@@ -105,8 +105,8 @@ def main():
         num_recommendations = st.slider(
                 "Number of Recommendations",
                 min_value=1,
-                max_value=25,  # You can adjust this maximum value
-                value=10,  # Default value
+                max_value=25,  
+                value=10,  
                 step=1,
                 help="Select how many job recommendations you want to see"
             )
