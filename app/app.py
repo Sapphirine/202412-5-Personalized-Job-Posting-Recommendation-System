@@ -120,7 +120,7 @@ def main():
             recommender = JobRecommender()
             
             
-            df = pd.read_csv('./data/job_data.csv')  # In real app, this would be your actual job database
+            df = pd.read_csv('./data/job_data.csv') 
             df = clean_data(df)
             
             resume_embedding_bert, resume_tfidf = recommender.compute_resume_embedding(resume_sum, resume_info)
