@@ -50,6 +50,9 @@ final_project_6893/
 To run the application: 
 ```streamlit run app/app.py```
 
+## Video Link: 
+https://www.youtube.com/watch?v=5IKAlHggN8g
+
 
 
 ## Authors
